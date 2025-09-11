@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import errorHandlerPlugin from "../src/shared/plugins/errorHandler.plugin";
+import superPowerRoutes from "../src/features/super-power/superpower.route";
 
 async function start() {
   try {
@@ -15,6 +17,9 @@ async function start() {
       },
       //   logger: true,
     });
+
+    fastify.register(errorHandlerPlugin);
+    fastify.register(superPowerRoutes, { prefix: "/api" });
 
     fastify.get("/", async function handler(request, reply) {
       return { hello: "world" };
