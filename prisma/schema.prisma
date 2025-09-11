@@ -1,0 +1,41 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+enum HeroType {
+    HERO
+    VILLAIN
+}
+
+model Superhero {
+    id                Int          @id @default(autoincrement())
+    nickname          String       @unique
+    realName          String?
+    originDescription String
+    catchPhrase       String?
+    type              HeroType
+    superPowers       SuperPower[] @relation("HeroSuperPowers")
+    createdAt         DateTime     @default(now())
+}
+
+model SuperPower {
+    id     Int         @id @default(autoincrement())
+    name   String      @unique
+    heroes Superhero[] @relation("HeroSuperPowers")
+}
+
+model Image {
+    id         Int      @id @default(autoincrement())
+    url        String
+    caption    String?
+    uploadedAt DateTime @default(now())
+
+    entityType String
+    entityId   Int
+}
