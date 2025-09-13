@@ -1,6 +1,8 @@
 import Fastify from "fastify";
 import errorHandlerPlugin from "../src/shared/plugins/errorHandler.plugin";
 import superPowerRoutes from "../src/features/super-power/superpower.route";
+import multipart from "@fastify/multipart";
+import superheroRoutes from "../src/features/superhero/superhero.route";
 
 async function start() {
   try {
@@ -19,7 +21,12 @@ async function start() {
     });
 
     fastify.register(errorHandlerPlugin);
+    await fastify.register(multipart, {
+      limits: { fileSize: 5 * 1024 * 1024 },
+      attachFieldsToBody: true,
+    });
     fastify.register(superPowerRoutes, { prefix: "/api" });
+    fastify.register(superheroRoutes, { prefix: "/api" });
 
     fastify.get("/", async function handler(request, reply) {
       return { hello: "world" };

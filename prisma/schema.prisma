@@ -14,14 +14,15 @@ enum HeroType {
 }
 
 model Superhero {
-    id                Int          @id @default(autoincrement())
-    nickname          String       @unique
+    id                Int              @id @default(autoincrement())
+    nickname          String           @unique
     realName          String?
     originDescription String
     catchPhrase       String?
     type              HeroType
-    superPowers       SuperPower[] @relation("HeroSuperPowers")
-    createdAt         DateTime     @default(now())
+    superPowers       SuperPower[]     @relation("HeroSuperPowers")
+    images            SuperheroImage[]
+    createdAt         DateTime         @default(now())
 }
 
 model SuperPower {
@@ -30,12 +31,11 @@ model SuperPower {
     heroes Superhero[] @relation("HeroSuperPowers")
 }
 
-model Image {
-    id         Int      @id @default(autoincrement())
-    url        String
-    caption    String?
-    uploadedAt DateTime @default(now())
-
-    entityType String
-    entityId   Int
+model SuperheroImage {
+    id          Int       @id @default(autoincrement())
+    url         String
+    caption     String?
+    uploadedAt  DateTime  @default(now())
+    superhero   Superhero @relation(fields: [superheroId], references: [id], onDelete: Cascade)
+    superheroId Int
 }

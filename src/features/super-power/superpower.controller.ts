@@ -11,13 +11,13 @@ export const getSuperPowerByIdHandler: RouteHandler<
 > = async (request, reply) => {
   const { id } = request.params;
 
-  const superPower = await superPowerService.getById(Number(id));
+  const superhero = await superPowerService.getById(Number(id));
 
-  if (!superPower) {
-    return reply.code(404).send({ error: "Super power not found" });
+  if (!superhero) {
+    return reply.code(404).send({ error: "Superhero not found" });
   }
 
-  return reply.code(200).send(superPower);
+  return reply.code(200).send(superhero);
 };
 
 export const getAllSuperPowersHandler: RouteHandler = async (
