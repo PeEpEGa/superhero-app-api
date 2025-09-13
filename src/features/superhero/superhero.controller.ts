@@ -4,6 +4,7 @@ import {
   CreateSuperheroReqeust,
   DeleteSuperheroImageRequest,
   DeleteSuperheroRequest,
+  GetPaginatedSuperheroesRequest,
   GetSuperheroByIdRequest,
   UpdateSuperheroReqeust,
   UploadSuperheroImagesRequest,
@@ -30,6 +31,21 @@ export const getAllSuperheroesHandler: RouteHandler = async (
   const superheroes = await superheroService.getAll();
 
   return reply.code(200).send(superheroes);
+};
+
+export const getPaginatedSuperheroesHandler: RouteHandler<
+  GetPaginatedSuperheroesRequest
+> = async (request, reply) => {
+  const { page, limit, sortBy, order } = request.query;
+
+  const result = await superheroService.getPaginatedSuperheroes({
+    page: page ? Number(page) : undefined,
+    limit: limit ? Number(limit) : undefined,
+    sortBy,
+    order,
+  });
+
+  return reply.code(200).send(result);
 };
 
 export const createSuperheroHandler: RouteHandler<

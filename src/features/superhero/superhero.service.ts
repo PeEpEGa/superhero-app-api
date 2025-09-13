@@ -2,6 +2,7 @@ import { Superhero } from "@prisma/client";
 import { prisma } from "../../shared/db/prisma";
 import {
   CreateSuperheroDto,
+  PaginationOptions,
   SuperheroData,
   UpdateSuperheroDto,
 } from "./superhero.type";
@@ -21,6 +22,37 @@ export const superheroService = {
     return await prisma.superhero.findMany({
       include: { superPowers: true, images: true },
     });
+  },
+
+  async getPaginatedSuperheroes({
+    page = 1,
+    limit = 10,
+    sortBy = "createdAt",
+    order = "asc",
+  }: PaginationOptions) {
+    const safePage = Math.max(page, 1);
+    const safeLimit = Math.max(limit, 1);
+    const skip = (safePage - 1) * safeLimit;
+
+    const [superheroes, total] = await Promise.all([
+      prisma.superhero.findMany({
+        orderBy: { [sortBy]: order },
+        skip,
+        take: safeLimit,
+        include: { superPowers: true, images: true },
+      }),
+      prisma.superhero.count(),
+    ]);
+
+    return {
+      data: superheroes,
+      pagination: {
+        page: safePage,
+        limit: safeLimit,
+        total,
+        totalPages: Math.ceil(total / safeLimit),
+      },
+    };
   },
 
   async create(data: CreateSuperheroDto): Promise<SuperheroData> {

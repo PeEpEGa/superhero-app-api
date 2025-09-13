@@ -5,6 +5,7 @@ import {
   deleteSuperheroHandler,
   deleteSuperheroImageHandler,
   getAllSuperheroesHandler,
+  getPaginatedSuperheroesHandler,
   getSuperheroByIdHandler,
   updateSuperheroHandler,
   uploadSuperheroImagesHandler,
@@ -41,6 +42,41 @@ export default async function superheroRoutes(fastify: FastifyInstance) {
       },
     },
     handler: getSuperheroByIdHandler,
+  });
+
+  fastify.get("/superheroes/paginated", {
+    schema: {
+      description: "Get paginated superheroes",
+      tags: ["superheroes"],
+      querystring: {
+        type: "object",
+        properties: {
+          page: { type: "string" },
+          limit: { type: "string" },
+          sortBy: { type: "string" },
+          order: { type: "string", enum: ["asc", "desc"] },
+        },
+      },
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            data: { type: "array", items: superHeroSchema },
+            pagination: {
+              type: "object",
+              properties: {
+                page: { type: "number" },
+                limit: { type: "number" },
+                total: { type: "number" },
+                totalPages: { type: "number" },
+              },
+            },
+          },
+        },
+        500: errorSchema,
+      },
+    },
+    handler: getPaginatedSuperheroesHandler,
   });
 
   fastify.post("/superheroes", {

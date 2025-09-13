@@ -61,3 +61,13 @@ export interface DeleteSuperheroImageRequest {
     imageId: string;
   };
 }
+export interface PaginationOptions {
+  page?: number;
+  limit?: number;
+  sortBy?: "createdAt" | "nickname" | "type";
+  order?: "asc" | "desc";
+}
+
+export interface GetPaginatedSuperheroesRequest {
+  Querystring: PaginationOptions;
+}
