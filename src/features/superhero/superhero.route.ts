@@ -3,9 +3,11 @@ import { errorSchema, idParamSchema } from "../../shared/schemas/shared.schema";
 import {
   createSuperheroHandler,
   deleteSuperheroHandler,
+  deleteSuperheroImageHandler,
   getAllSuperheroesHandler,
   getSuperheroByIdHandler,
   updateSuperheroHandler,
+  uploadSuperheroImagesHandler,
 } from "./superhero.controller";
 import {
   createSuperHeroBodySchema,
@@ -83,5 +85,57 @@ export default async function superheroRoutes(fastify: FastifyInstance) {
       },
     },
     handler: deleteSuperheroHandler,
+  });
+
+  fastify.post("/superheroes/:id/images", {
+    schema: {
+      description: "Upload images for a superhero",
+      tags: ["superheroes"],
+      params: idParamSchema,
+      response: {
+        201: {
+          type: "object",
+          properties: {
+            images: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "number" },
+                  url: { type: "string" },
+                  uploadedAt: { type: "string" },
+                  superheroId: { type: "number" },
+                },
+              },
+            },
+          },
+        },
+        400: errorSchema,
+        404: errorSchema,
+        500: errorSchema,
+      },
+    },
+    handler: uploadSuperheroImagesHandler,
+  });
+
+  fastify.delete("/superheroes/:id/images/:imageId", {
+    schema: {
+      description: "Delete a superhero image by ID",
+      tags: ["superheroes"],
+      params: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          imageId: { type: "string" },
+        },
+        required: ["id", "imageId"],
+      },
+      response: {
+        204: { type: "null" },
+        404: errorSchema,
+        500: errorSchema,
+      },
+    },
+    handler: deleteSuperheroImageHandler,
   });
 }

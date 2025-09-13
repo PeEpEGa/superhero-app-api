@@ -2,9 +2,11 @@ import { RouteHandler } from "../../shared/types";
 import { superheroService } from "./superhero.service";
 import {
   CreateSuperheroReqeust,
+  DeleteSuperheroImageRequest,
   DeleteSuperheroRequest,
   GetSuperheroByIdRequest,
   UpdateSuperheroReqeust,
+  UploadSuperheroImagesRequest,
 } from "./superhero.type";
 
 export const getSuperheroByIdHandler: RouteHandler<
@@ -55,4 +57,27 @@ export const deleteSuperheroHandler: RouteHandler<
   return reply.code(204).send();
 };
 
-// export const uploadSuperheroImagesHandler: RouteHandler
+export const uploadSuperheroImagesHandler: RouteHandler<
+  UploadSuperheroImagesRequest
+> = async (request, reply) => {
+  const { id } = request.params;
+
+  const files = await request.files();
+  if (!files) {
+    return reply.code(400).send({ error: "No files provided" });
+  }
+
+  const images = await superheroService.uploadImages(Number(id), files);
+
+  return reply.code(201).send({ images });
+};
+
+export const deleteSuperheroImageHandler: RouteHandler<
+  DeleteSuperheroImageRequest
+> = async (request, reply) => {
+  const { imageId } = request.params;
+
+  await superheroService.deleteImage(Number(imageId));
+
+  return reply.code(204).send();
+};

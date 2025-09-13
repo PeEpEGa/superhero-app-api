@@ -23,7 +23,7 @@ async function start() {
     fastify.register(errorHandlerPlugin);
     await fastify.register(multipart, {
       limits: { fileSize: 5 * 1024 * 1024 },
-      attachFieldsToBody: true,
+      // attachFieldsToBody: true,
     });
     fastify.register(superPowerRoutes, { prefix: "/api" });
     fastify.register(superheroRoutes, { prefix: "/api" });

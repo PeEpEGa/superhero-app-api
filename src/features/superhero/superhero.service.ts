@@ -1,4 +1,4 @@
-import { Prisma, Superhero } from "@prisma/client";
+import { Superhero } from "@prisma/client";
 import { prisma } from "../../shared/db/prisma";
 import {
   CreateSuperheroDto,
@@ -6,8 +6,8 @@ import {
   UpdateSuperheroDto,
 } from "./superhero.type";
 import { uploadService } from "../../shared/services/upload.service";
-import { buffer } from "stream/consumers";
-import { connect } from "http2";
+import { streamToBuffer } from "../../shared/utils/streamToBuffer";
+import { MultipartFile } from "@fastify/multipart";
 
 export const superheroService = {
   async getById(id: number): Promise<SuperheroData | null> {
@@ -78,23 +78,26 @@ export const superheroService = {
 
   async uploadImages(
     superheroId: number,
-    files: { buffer: Buffer; originalName: string }[]
+    files: AsyncIterableIterator<MultipartFile>
   ) {
-    const urls = await uploadService.uploadFiles(
-      files.map((file) => ({
-        buffer: file.buffer,
-        originalName: file.originalName,
-      })),
-      "superheroes"
-    );
+    const fileBuffers: { buffer: Buffer; originalName: string }[] = [];
+
+    for await (const file of files) {
+      const buffer = await streamToBuffer(file.file);
+      fileBuffers.push({ buffer, originalName: file.filename });
+    }
+
+    const urls = await uploadService.uploadFiles(fileBuffers, "superheroes");
 
     const images = await Promise.all(
-      urls.map((url) => {
-        return prisma.superheroImage.create({
-          // <-- add return
-          data: { superheroId, url },
-        });
-      })
+      urls.map((url) =>
+        prisma.superheroImage.create({
+          data: {
+            superheroId,
+            url,
+          },
+        })
+      )
     );
 
     return images;

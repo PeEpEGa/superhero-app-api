@@ -50,3 +50,14 @@ export interface UpdateSuperheroReqeust {
 export interface DeleteSuperheroRequest {
   Params: IdParam;
 }
+
+export interface UploadSuperheroImagesRequest {
+  Params: IdParam;
+}
+
+export interface DeleteSuperheroImageRequest {
+  Params: {
+    id: string;
+    imageId: string;
+  };
+}
