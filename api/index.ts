@@ -7,61 +7,80 @@ import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 
-async function start() {
-  try {
-    const fastify = Fastify({
-      // logger: {
-      //   level: "info",
-      //   transport: {
-      //     target: "pino-pretty",
-      //     options: {
-      //       translateTime: "HH:MM:ss Z",
-      //       ignore: "pid,hostname",
-      //     },
-      //   },
-      // },
-      logger: true,
-    });
+const html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fastify + Vercel</title>
+  </head>
+  <body>
+    <h1>Fastify + Vercel</h1>
+    <p>Serverless API is running!</p>
+  </body>
+</html>
+`;
 
-    await fastify.register(cors, {
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    });
+async function buildApp() {
+  const fastify = Fastify({
+    // logger: {
+    //   level: "info",
+    //   transport: {
+    //     target: "pino-pretty",
+    //     options: {
+    //       translateTime: "HH:MM:ss Z",
+    //       ignore: "pid,hostname",
+    //     },
+    //   },
+    // },
+    logger: true,
+  });
 
-    fastify.register(errorHandlerPlugin);
-    await fastify.register(multipart, {
-      limits: { fileSize: 5 * 1024 * 1024 },
-    });
+  await fastify.register(cors, {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  });
 
-    // Register Swagger
-    await fastify.register(swagger, {
-      openapi: {
-        info: {
-          title: "Music Tracks API",
-          description: "API for managing superheroes",
-          version: "1.0.0",
-        },
+  fastify.register(errorHandlerPlugin);
+  await fastify.register(multipart, {
+    limits: { fileSize: 5 * 1024 * 1024 },
+  });
+
+  // Register Swagger
+  await fastify.register(swagger, {
+    openapi: {
+      info: {
+        title: "Music Tracks API",
+        description: "API for managing superheroes",
+        version: "1.0.0",
       },
-    });
+    },
+  });
 
-    // Register Swagger UI
-    await fastify.register(swaggerUi, {
-      routePrefix: "/documentation",
-      uiConfig: {
-        docExpansion: "list",
-        deepLinking: true,
-      },
-    });
+  // Register Swagger UI
+  await fastify.register(swaggerUi, {
+    routePrefix: "/documentation",
+    uiConfig: {
+      docExpansion: "list",
+      deepLinking: true,
+    },
+  });
 
-    fastify.register(superPowerRoutes, { prefix: "/api" });
-    fastify.register(superheroRoutes, { prefix: "/api" });
+  fastify.get("/", async (req, res) => {
+    return res.status(200).type("text/html").send(html);
+  });
 
-    await fastify.listen({ port: 3000 });
-  } catch (error) {
-    console.log("Error starting server:", error);
-    process.exit(1);
-  }
+  fastify.register(superPowerRoutes, { prefix: "/api" });
+  fastify.register(superheroRoutes, { prefix: "/api" });
+
+  await fastify.ready();
+  return fastify;
 }
 
-start();
+const appPromise = buildApp();
+
+export default async function handler(req: any, res: any) {
+  const app = await appPromise;
+  app.server.emit("request", req, res);
+}
