@@ -21,7 +21,7 @@ const html = `
 </html>
 `;
 
-async function buildApp() {
+export async function buildApp() {
   const fastify = Fastify({
     // logger: {
     //   level: "info",
