@@ -38,7 +38,8 @@ async function buildApp() {
 
   await fastify.register(cors, {
     origin: (origin, cb) => {
-      cb(null, true);
+      if (!origin) return cb(null, false);
+      cb(null, origin);
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
