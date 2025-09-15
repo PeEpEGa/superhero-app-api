@@ -46,12 +46,13 @@ src/
 
 ## 🔧 Setup & Development
 
-1. **Clone repository**
-   ```bash
-   git clone https://github.com/PeEpEGa/superhero-app-api.git
-   cd superhero-app-api
-   npm install
-   ```
+**Clone repository**
+
+```bash
+git clone https://github.com/PeEpEGa/superhero-app-api.git
+cd superhero-app-api
+npm install
+```
 
 Configure environment variables
 Create a .env file in the root:
@@ -72,7 +73,7 @@ Start development server
 
 🌍 Deployment
 
-The project is deployed on Vercel.
+The project is deployed on Vercel: https://superhero-app-api.vercel.app
 
 Fastify runs inside Vercel serverless functions (entry point: /api/index.ts).
 
