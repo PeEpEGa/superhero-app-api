@@ -17,6 +17,7 @@ This project is built with modern technologies to ensure scalability, performanc
 
 ## 📂 Project Structure
 
+```
 api/
 └── index.ts # Vercel serverless function entry point
 
@@ -29,6 +30,7 @@ src/
 │ ├── services/ # Shared services
 │ └── utils/ # Utility functions and helpers
 └── server.ts # Local development entry point
+```
 
 ---
 
@@ -48,27 +50,28 @@ src/
    ```bash
    git clone https://github.com/PeEpEGa/superhero-app-api.git
    cd superhero-app-api
-   Install dependencies
+   npm install
    ```
 
-npm install
 Configure environment variables
 Create a .env file in the root:
 
-.env
+```
 DATABASE_URL="postgresql://username:password@db.supabase.co:5432/postgres"
 DIRECT_URL="postgresql://username:password@db.supabase.co:5432/postgres?pgbouncer=false"
 
 SUPABASE_URL="https://your-project.supabase.co"
 SUPABASE_KEY="your-supabase-service-key"
+```
 
 Run database migrations
-npx prisma migrate dev
+`npx prisma migrate dev`
 
 Start development server
-npm run dev
+`npm run dev`
 
 🌍 Deployment
+
 The project is deployed on Vercel.
 
 Fastify runs inside Vercel serverless functions (entry point: /api/index.ts).
@@ -81,4 +84,4 @@ Once the server is running, Swagger UI is available at:
 http://localhost:3000/documentation
 
 In production (Vercel deployment):
-https://your-vercel-app.vercel.app/documentation
+https://superhero-app-api.vercel.app/documentation
