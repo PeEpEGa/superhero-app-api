@@ -51,7 +51,7 @@ async function buildApp() {
   await fastify.register(swagger, {
     openapi: {
       info: {
-        title: "Music Tracks API",
+        title: "Superheroes API",
         description: "API for managing superheroes",
         version: "1.0.0",
       },
