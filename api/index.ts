@@ -46,6 +46,8 @@ async function buildApp() {
     credentials: true,
   });
 
+  fastify.options("/*", async (_req, res) => res.send());
+
   fastify.register(errorHandlerPlugin);
   await fastify.register(multipart, {
     limits: { fileSize: 5 * 1024 * 1024 },
