@@ -37,16 +37,10 @@ async function buildApp() {
   });
 
   await fastify.register(cors, {
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, false);
-      cb(null, origin);
-    },
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
   });
-
-  fastify.options("/*", async (_req, res) => res.send());
 
   fastify.register(errorHandlerPlugin);
   await fastify.register(multipart, {
