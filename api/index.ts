@@ -37,9 +37,14 @@ async function buildApp() {
   });
 
   await fastify.register(cors, {
-    origin: "*",
+    origin: "https://superhero-app-ui.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  });
+
+  fastify.options("/*", async (req, res) => {
+    res.status(200).send();
   });
 
   fastify.register(errorHandlerPlugin);
